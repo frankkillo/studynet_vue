@@ -1,30 +1,56 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="app">
+    <nav class="navbar is-dark" role="navigation" aria-label="main naviation" style="min-height: 5rem;">
+        <div class="navbar-brand">
+          <router-link class="navbar-item is-size-4" to="/">StudyNet</router-link>
+        </div>
+        <div id="navbar-item" class="navbar-menu">
+          <div class="navbar-start">
+            <router-link to="/about" class="navbar-item is-size-6">About</router-link>
+            <router-link to="/courses" class="navbar-item is-size-6">Courses</router-link>
+          </div>
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <template v-if="!$store.state.isAuthenticated">
+                  <router-link to="/sign-up" class="button is-white"><strong>Sign up</strong></router-link>
+                  <router-link to="/log-in" class="button is-light">Log in</router-link>
+                </template>
+                <template v-else>
+                  <router-link to="/dashboard/my-account" class="button is-dark">My account</router-link>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+    </nav>
+
+    <router-view/>
+
+    <footer class="footer">
+      <p class="has-text-centered">Copyright (c) 2022</p>
+    </footer>
+  </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import axios from 'axios'
 
-nav {
-  padding: 30px;
+export default {
+  beforeCreate() {
+    this.$store.commit('initializeStore')
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+    const token = this.$store.state.token
 
-    &.router-link-exact-active {
-      color: #42b983;
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = "Token " + token
+    } else {
+      axios.defaults.headers.common['Authorization'] = ""
     }
-  }
+  },
 }
+</script>
+
+<style lang="scss">
+@import '../node_modules/bulma';
 </style>
